@@ -86,3 +86,47 @@ def run(filename):
 
             else:
                 print(content.strip('"'))
+
+def execute(ast, variables):
+
+    if ast["type"] == "let":
+
+        value = ast["value"]
+
+        if value.isdigit():
+            value = int(value)
+
+        variables[ast["name"]] = value
+
+        print("Stored:", ast["name"], "=", value)
+
+    elif ast["type"] == "print":
+
+        expression = ast["expression"]
+
+        if isinstance(expression, str):
+
+            if expression.isdigit():
+                print(int(expression))
+
+            elif expression in variables:
+                print(variables[expression])
+
+            else:
+                print(expression)
+
+        elif expression["type"] == "add":
+
+            left = expression["left"]
+            right = expression["right"]
+
+            left_value = variables.get(left, left)
+            right_value = variables.get(right, right)
+
+            if str(left_value).isdigit():
+                left_value = int(left_value)
+
+            if str(right_value).isdigit():
+                right_value = int(right_value)
+
+            print(left_value + right_value)
