@@ -99,10 +99,30 @@ def evaluate(node, variables):
     if node["type"] == "add":
 
         left = evaluate(node["left"], variables)
-
         right = evaluate(node["right"], variables)
 
         return left + right
+
+    if node["type"] == "subtract":
+
+        left = evaluate(node["left"], variables)
+        right = evaluate(node["right"], variables)
+
+        return left - right
+
+    if node["type"] == "multiply":
+
+        left = evaluate(node["left"], variables)
+        right = evaluate(node["right"], variables)
+
+        return left * right
+
+    if node["type"] == "divide":
+
+        left = evaluate(node["left"], variables)
+        right = evaluate(node["right"], variables)
+
+        return left / right
 
 def execute(ast, variables):
 
