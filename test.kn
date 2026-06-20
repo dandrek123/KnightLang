@@ -1,0 +1,13 @@
+let x = 20
+let y = 5
+let name = "DAndre"
+let age = 22
+
+print(x + y)
+print(x - y)
+print(x * y)
+print(x / y)
+
+print("Hello " + name)
+
+if age > 18
