@@ -10,16 +10,6 @@ execute(
 )
 
 execute(
-    parse(tokenize("print(age - 2)")),
-    variables
-)
-
-execute(
-    parse(tokenize("print(age * 2)")),
-    variables
-)
-
-execute(
-    parse(tokenize("print(age / 2)")),
+    parse(tokenize("print(age + 5 * 2)")),
     variables
 )
