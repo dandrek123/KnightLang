@@ -4,8 +4,12 @@ from interpreter import execute
 
 variables = {}
 
-ast = parse(tokenize("let age = 22"))
-execute(ast, variables)
+execute(
+    parse(tokenize("let age = 22")),
+    variables
+)
 
-ast = parse(tokenize("print(age + 5)"))
-execute(ast, variables)
+execute(
+    parse(tokenize("print(age + 5 + 10)")),
+    variables
+)

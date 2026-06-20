@@ -87,6 +87,23 @@ def run(filename):
             else:
                 print(content.strip('"'))
 
+def evaluate(node, variables):
+
+    if isinstance(node, str):
+
+        if node.isdigit():
+            return int(node)
+
+        return variables[node]
+
+    if node["type"] == "add":
+
+        left = evaluate(node["left"], variables)
+
+        right = evaluate(node["right"], variables)
+
+        return left + right
+
 def execute(ast, variables):
 
     if ast["type"] == "let":
@@ -102,31 +119,6 @@ def execute(ast, variables):
 
     elif ast["type"] == "print":
 
-        expression = ast["expression"]
+        result = evaluate(ast["expression"], variables)
 
-        if isinstance(expression, str):
-
-            if expression.isdigit():
-                print(int(expression))
-
-            elif expression in variables:
-                print(variables[expression])
-
-            else:
-                print(expression)
-
-        elif expression["type"] == "add":
-
-            left = expression["left"]
-            right = expression["right"]
-
-            left_value = variables.get(left, left)
-            right_value = variables.get(right, right)
-
-            if str(left_value).isdigit():
-                left_value = int(left_value)
-
-            if str(right_value).isdigit():
-                right_value = int(right_value)
-
-            print(left_value + right_value)
+        print(result)

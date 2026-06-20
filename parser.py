@@ -3,36 +3,38 @@ def parse_expression(tokens):
     if len(tokens) == 1:
         return tokens[0]
 
-    # x + y
-    if len(tokens) == 3 and tokens[1] == "+":
+    left = parse_expression(tokens[:-2])
+
+    operator = tokens[-2]
+
+    right = tokens[-1]
+
+    if operator == "+":
         return {
             "type": "add",
-            "left": tokens[0],
-            "right": tokens[2]
+            "left": left,
+            "right": right
         }
 
-    # x - y
-    if len(tokens) == 3 and tokens[1] == "-":
+    if operator == "-":
         return {
             "type": "subtract",
-            "left": tokens[0],
-            "right": tokens[2]
+            "left": left,
+            "right": right
         }
 
-    # x * y
-    if len(tokens) == 3 and tokens[1] == "*":
+    if operator == "*":
         return {
             "type": "multiply",
-            "left": tokens[0],
-            "right": tokens[2]
+            "left": left,
+            "right": right
         }
 
-    # x / y
-    if len(tokens) == 3 and tokens[1] == "/":
+    if operator == "/":
         return {
             "type": "divide",
-            "left": tokens[0],
-            "right": tokens[2]
+            "left": left,
+            "right": right
         }
 
     return tokens
