@@ -3,6 +3,7 @@ from parser import parse
 from interpreter import execute
 
 variables = {}
+last_if_result = None
 
 with open("test.kn", "r") as file:
     lines = file.readlines()
@@ -26,6 +27,8 @@ while i < len(lines):
         if ast["type"] == "if":
 
             result = execute(ast, variables)
+            
+            last_if_result = result
 
             i += 1
 
@@ -37,6 +40,21 @@ while i < len(lines):
 
                 execute(next_ast, variables)
 
+        elif ast["type"] == "else":
+
+            i += 1
+
+            next_line = lines[i].strip()
+
+            if last_if_result == False:
+
+                next_ast = parse(tokenize(next_line))
+
+                execute(next_ast, variables)
+
+            i += 1
+
+            continue
         else:
             execute(ast, variables)
 

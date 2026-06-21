@@ -52,6 +52,12 @@ def parse(tokens):
             "name": tokens[1],
             "value": tokens[3]
         }
+    
+    if tokens[0] == "else":
+
+        return {
+            "type": "else"
+        }
 
     # print(...)
     elif tokens[0] == "print":

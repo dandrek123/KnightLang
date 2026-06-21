@@ -3,4 +3,5 @@ let age = 15
 if age > 18
 print("Adult")
 
-print("Done")
+else
+print("Minor")
