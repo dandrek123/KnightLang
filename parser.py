@@ -53,10 +53,28 @@ def parse(tokens):
             "value": tokens[3]
         }
     
+    # count = count + 1
+    if len(tokens) >= 3 and tokens[1] == "=":
+
+        return {
+            "type": "assign",
+            "name": tokens[0],
+            "value": parse_expression(tokens[2:])
+        }
+
     if tokens[0] == "else":
 
         return {
             "type": "else"
+        }
+    
+    elif tokens[0] == "while":
+
+        return {
+            "type": "while",
+            "left": tokens[1],
+            "operator": tokens[2],
+            "right": tokens[3]
         }
 
     # print(...)

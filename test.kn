@@ -1,7 +1,7 @@
-let age = 22
+let count = 0
 
-if age >= 21
-print("Can Drink")
+while count < 5
+    print(count)
+    count = count + 1
 
-else
-print("Too Young")
+print("Done")

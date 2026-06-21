@@ -143,6 +143,12 @@ def execute(ast, variables):
 
         variables[ast["name"]] = value
 
+    elif ast["type"] == "assign":
+
+        value = evaluate(ast["value"], variables)
+
+        variables[ast["name"]] = value
+
 
     elif ast["type"] == "print":
 
@@ -172,4 +178,27 @@ def execute(ast, variables):
 
         if ast["operator"] == "!=":
             return left != right
+        
+    elif ast["type"] == "while":
+
+        left = evaluate(ast["left"], variables)
+        right = evaluate(ast["right"], variables)
+
+        if ast["operator"] == "<":
+            return left < right
+
+        if ast["operator"] == ">":
+            return left > right
+
+        if ast["operator"] == "==":
+            return left == right
+
+        if ast["operator"] == "!=":
+            return left != right
+
+        if ast["operator"] == ">=":
+            return left >= right
+
+        if ast["operator"] == "<=":
+            return left <= right
         
