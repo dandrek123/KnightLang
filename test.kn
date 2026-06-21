@@ -1,13 +1,4 @@
-let x = 20
-let y = 5
-let name = "DAndre"
-let age = 22
+let first = "DAndre"
+let last = "Knight"
 
-print(x + y)
-print(x - y)
-print(x * y)
-print(x / y)
-
-print("Hello " + name)
-
-if age > 18
+print(first + " " + last)

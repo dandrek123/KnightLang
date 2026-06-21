@@ -4,12 +4,19 @@ from interpreter import execute
 
 variables = {}
 
-execute(
-    parse(tokenize("let age = 22")),
-    variables
-)
+with open("test.kn", "r") as file:
+    lines = file.readlines()
 
-execute(
-    parse(tokenize("print(age + 5 * 2)")),
-    variables
-)
+for line in lines:
+
+    line = line.strip()
+
+    if not line:
+        continue
+
+    tokens = tokenize(line)
+
+    ast = parse(tokens)
+
+    if ast:
+        execute(ast, variables)

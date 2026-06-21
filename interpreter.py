@@ -93,6 +93,9 @@ def evaluate(node, variables):
 
         if node.isdigit():
             return int(node)
+        
+        if node.startswith('"') and node.endswith('"'):
+            return node.strip('"')
 
         return variables[node]
 
@@ -132,6 +135,9 @@ def execute(ast, variables):
 
         if value.isdigit():
             value = int(value)
+
+        elif value.startswith('"') and value.endswith('"'):
+            value = value.strip('"')
 
         variables[ast["name"]] = value
 
