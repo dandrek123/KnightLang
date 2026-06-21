@@ -7,11 +7,14 @@ variables = {}
 with open("test.kn", "r") as file:
     lines = file.readlines()
 
-for line in lines:
+i = 0
 
-    line = line.strip()
+while i < len(lines):
+
+    line = lines[i].strip()
 
     if not line:
+        i += 1
         continue
 
     tokens = tokenize(line)
@@ -19,4 +22,22 @@ for line in lines:
     ast = parse(tokens)
 
     if ast:
-        execute(ast, variables)
+
+        if ast["type"] == "if":
+
+            result = execute(ast, variables)
+
+            i += 1
+
+            next_line = lines[i].strip()
+
+            if result:
+
+                next_ast = parse(tokenize(next_line))
+
+                execute(next_ast, variables)
+
+        else:
+            execute(ast, variables)
+
+    i += 1

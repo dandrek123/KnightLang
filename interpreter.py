@@ -87,6 +87,8 @@ def run(filename):
             else:
                 print(content.strip('"'))
 
+
+
 def evaluate(node, variables):
 
     if isinstance(node, str):
@@ -148,3 +150,12 @@ def execute(ast, variables):
         result = evaluate(ast["expression"], variables)
 
         print(result)
+
+    elif ast["type"] == "if":
+
+        left = evaluate(ast["left"], variables)
+        right = evaluate(ast["right"], variables)
+
+        result = left > right
+
+        return result

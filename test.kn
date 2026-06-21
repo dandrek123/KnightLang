@@ -1,4 +1,6 @@
-let first = "DAndre"
-let last = "Knight"
+let age = 15
 
-print(first + " " + last)
+if age > 18
+print("Adult")
+
+print("Done")
