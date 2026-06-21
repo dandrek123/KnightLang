@@ -3,14 +3,13 @@ from parser import parse
 from interpreter import execute
 
 variables = {}
-last_if_result = None
+functions = {}
+
 
 def get_indent(line):
-
     count = 0
 
     for char in line:
-
         if char == " ":
             count += 1
         else:
@@ -18,104 +17,108 @@ def get_indent(line):
 
     return count
 
-def get_block(lines, start_index):
 
+def get_block(lines, start_index, parent_indent):
     block = []
+    i = start_index
 
-    block_indent = get_indent(lines[start_index])
-
-    while start_index < len(lines):
-
-        line = lines[start_index]
+    while i < len(lines):
+        line = lines[i]
 
         if not line.strip():
-            start_index += 1
+            i += 1
             continue
 
-        if get_indent(line) < block_indent:
+        if get_indent(line) <= parent_indent:
             break
 
-        block.append(line.strip())
+        block.append(line)
+        i += 1
 
-        start_index += 1
+    return block, i
 
-    return block
 
-def run_line(line, variables):
-
-    tokens = tokenize(line)
-
+def run_line(line):
+    tokens = tokenize(line.strip())
     ast = parse(tokens)
 
     if ast:
         return execute(ast, variables)
 
-with open("test.kn", "r") as file:
-    lines = file.readlines()
-
-i = 0
+    return None
 
 
-while i < len(lines):
+def run_lines(lines):
+    i = 0
+    last_if_result = None
 
-    line = lines[i].strip()
+    while i < len(lines):
+        raw_line = lines[i]
+        line = raw_line.strip()
 
-    if not line:
-        i += 1
-        continue
+        if not line:
+            i += 1
+            continue
 
-    tokens = tokenize(line)
+        tokens = tokenize(line)
+        ast = parse(tokens)
 
-    ast = parse(tokens)
-
-    if ast:
+        if not ast:
+            i += 1
+            continue
 
         if ast["type"] == "if":
-
             result = execute(ast, variables)
-            
             last_if_result = result
 
-            i += 1
-
-            next_line = lines[i].strip()
+            block, next_index = get_block(lines, i + 1, get_indent(raw_line))
 
             if result:
+                run_lines(block)
 
-                next_ast = parse(tokenize(next_line))
-
-                execute(next_ast, variables)
-
-        elif ast["type"] == "while":
-
-            block = get_block(lines, i + 1)
-
-            while execute(ast, variables):
-
-                for block_line in block:
-
-                    run_line(block_line, variables)
-
-            i += len(block)
-
+            i = next_index
             continue
 
         elif ast["type"] == "else":
-
-            i += 1
-
-            next_line = lines[i].strip()
+            block, next_index = get_block(lines, i + 1, get_indent(raw_line))
 
             if last_if_result == False:
+                run_lines(block)
 
-                next_ast = parse(tokenize(next_line))
-
-                execute(next_ast, variables)
-
-            i += 1
-
+            i = next_index
             continue
+
+        elif ast["type"] == "while":
+            block, next_index = get_block(lines, i + 1, get_indent(raw_line))
+
+            while execute(ast, variables):
+                run_lines(block)
+
+            i = next_index
+            continue
+
+        elif ast["type"] == "func":
+            block, next_index = get_block(lines, i + 1, get_indent(raw_line))
+            functions[ast["name"]] = block
+
+            i = next_index
+            continue
+
+        elif ast["type"] == "call":
+            function_name = ast["name"]
+
+            if function_name in functions:
+                run_lines(functions[function_name])
+            else:
+                print("Function not found:", function_name)
+
         else:
             execute(ast, variables)
 
-    i += 1
+        i += 1
+
+
+with open("test.kn", "r") as file:
+    lines = file.readlines()
+
+run_lines(lines)
