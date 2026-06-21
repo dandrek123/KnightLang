@@ -143,7 +143,6 @@ def execute(ast, variables):
 
         variables[ast["name"]] = value
 
-        print("Stored:", ast["name"], "=", value)
 
     elif ast["type"] == "print":
 
@@ -156,6 +155,21 @@ def execute(ast, variables):
         left = evaluate(ast["left"], variables)
         right = evaluate(ast["right"], variables)
 
-        result = left > right
+        if ast["operator"] == ">":
+            return left > right
 
-        return result
+        if ast["operator"] == "<":
+            return left < right
+
+        if ast["operator"] == ">=":
+            return left >= right
+
+        if ast["operator"] == "<=":
+            return left <= right
+
+        if ast["operator"] == "==":
+            return left == right
+
+        if ast["operator"] == "!=":
+            return left != right
+        

@@ -3,7 +3,11 @@ def tokenize(line):
     current = ""
     in_string = False
 
-    for char in line:
+    i = 0
+
+    while i < len(line):
+
+        char = line[i]
 
         if char == '"':
             current += char
@@ -18,6 +22,16 @@ def tokenize(line):
         elif in_string:
             current += char
 
+        elif i + 1 < len(line) and line[i:i+2] in ["==", "!=", ">=", "<="]:
+
+            if current:
+                tokens.append(current)
+                current = ""
+
+            tokens.append(line[i:i+2])
+
+            i += 1
+
         elif char in " ()=+-*/><":
 
             if current:
@@ -29,6 +43,8 @@ def tokenize(line):
 
         else:
             current += char
+
+        i += 1
 
     if current:
         tokens.append(current)

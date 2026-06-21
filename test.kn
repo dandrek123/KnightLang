@@ -1,7 +1,7 @@
-let age = 15
+let age = 22
 
-if age > 18
-print("Adult")
+if age >= 21
+print("Can Drink")
 
 else
-print("Minor")
+print("Too Young")
