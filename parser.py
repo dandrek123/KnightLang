@@ -3,6 +3,13 @@ def parse_expression(tokens):
     if len(tokens) == 1:
         return tokens[0]
 
+    if len(tokens) >= 3 and tokens[1] == "(" and tokens[-1] == ")":
+        return {
+            "type": "call",
+            "name": tokens[0],
+            "args": tokens[2:-1]
+        }
+
     left = parse_expression(tokens[:-2])
 
     operator = tokens[-2]
@@ -50,7 +57,7 @@ def parse(tokens):
         return {
             "type": "let",
             "name": tokens[1],
-            "value": tokens[3]
+            "value": parse_expression(tokens[3:])
         }
     
     # count = count + 1
@@ -63,9 +70,14 @@ def parse(tokens):
         }
 
     if tokens[0] == "else":
-
         return {
             "type": "else"
+        }
+
+    if tokens[0] == "return":
+        return {
+            "type": "return",
+            "value": parse_expression(tokens[1:])
         }
 
     if tokens[0] == "func":

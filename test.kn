@@ -1,4 +1,6 @@
 func add_one number
-    print(number + 1)
+    return number + 1
 
-add_one(5)
+let result = add_one(5)
+
+print(result)

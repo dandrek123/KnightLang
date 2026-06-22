@@ -131,17 +131,16 @@ def evaluate(node, variables):
 
 def execute(ast, variables):
 
+    if ast["type"] == "return":
+        return evaluate(ast["value"], variables)
+
     if ast["type"] == "let":
 
-        value = ast["value"]
-
-        if value.isdigit():
-            value = int(value)
-
-        elif value.startswith('"') and value.endswith('"'):
-            value = value.strip('"')
+        value = evaluate(ast["value"], variables)
 
         variables[ast["name"]] = value
+
+        return value
 
     elif ast["type"] == "assign":
 

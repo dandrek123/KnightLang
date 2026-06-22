@@ -1,6 +1,6 @@
 from lexer import tokenize
 from parser import parse
-from interpreter import execute
+from interpreter import execute, evaluate
 
 variables = {}
 functions = {}
@@ -48,6 +48,38 @@ def run_line(line):
     return None
 
 
+def run_function_call(call_ast):
+    function_name = call_ast["name"]
+
+    if function_name not in functions:
+        print("Function not found:", function_name)
+        return None
+
+    function_data = functions[function_name]
+    params = function_data["params"]
+    body = function_data["body"]
+    args = call_ast["args"]
+
+    old_values = {}
+
+    for index, param in enumerate(params):
+        if param in variables:
+            old_values[param] = variables[param]
+
+        if index < len(args):
+            variables[param] = evaluate(args[index], variables)
+
+    return_value = run_lines(body)
+
+    for param in params:
+        if param in old_values:
+            variables[param] = old_values[param]
+        elif param in variables:
+            del variables[param]
+
+    return return_value
+
+
 def run_lines(lines):
     i = 0
     last_if_result = None
@@ -67,6 +99,16 @@ def run_lines(lines):
             i += 1
             continue
 
+        if ast["type"] in ["let", "assign"] and isinstance(ast.get("value"), dict) and ast["value"].get("type") == "call":
+            variables[ast["name"]] = run_function_call(ast["value"])
+            i += 1
+            continue
+
+        if ast["type"] == "print" and isinstance(ast.get("expression"), dict) and ast["expression"].get("type") == "call":
+            print(run_function_call(ast["expression"]))
+            i += 1
+            continue
+
         if ast["type"] == "if":
             result = execute(ast, variables)
             last_if_result = result
@@ -74,7 +116,10 @@ def run_lines(lines):
             block, next_index = get_block(lines, i + 1, get_indent(raw_line))
 
             if result:
-                run_lines(block)
+                return_value = run_lines(block)
+
+                if return_value is not None:
+                    return return_value
 
             i = next_index
             continue
@@ -83,7 +128,10 @@ def run_lines(lines):
             block, next_index = get_block(lines, i + 1, get_indent(raw_line))
 
             if last_if_result == False:
-                run_lines(block)
+                return_value = run_lines(block)
+
+                if return_value is not None:
+                    return return_value
 
             i = next_index
             continue
@@ -92,7 +140,10 @@ def run_lines(lines):
             block, next_index = get_block(lines, i + 1, get_indent(raw_line))
 
             while execute(ast, variables):
-                run_lines(block)
+                return_value = run_lines(block)
+
+                if return_value is not None:
+                    return return_value
 
             i = next_index
             continue
@@ -108,40 +159,13 @@ def run_lines(lines):
             continue
 
         elif ast["type"] == "call":
-            function_name = ast["name"]
-
-            if function_name in functions:
-                function_data = functions[function_name]
-                params = function_data["params"]
-                body = function_data["body"]
-                args = ast["args"]
-
-                old_values = {}
-
-                for index, param in enumerate(params):
-                    if param in variables:
-                        old_values[param] = variables[param]
-
-                    if index < len(args):
-                        value_ast = parse(args[index:index + 1])
-                        if value_ast:
-                            variables[param] = execute(value_ast, variables)
-                        else:
-                            from interpreter import evaluate
-                            variables[param] = evaluate(args[index], variables)
-
-                run_lines(body)
-
-                for param in params:
-                    if param in old_values:
-                        variables[param] = old_values[param]
-                    elif param in variables:
-                        del variables[param]
-            else:
-                print("Function not found:", function_name)
+            run_function_call(ast)
 
         else:
-            execute(ast, variables)
+            result = execute(ast, variables)
+
+            if ast["type"] == "return":
+                return result
 
         i += 1
 
