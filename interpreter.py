@@ -101,6 +101,20 @@ def evaluate(node, variables):
 
         return variables[node]
 
+    if node["type"] == "list":
+        items = []
+
+        for item in node["items"]:
+            items.append(evaluate(item, variables))
+
+        return items
+
+    if node["type"] == "index":
+        list_value = evaluate(node["list"], variables)
+        index_value = evaluate(node["index"], variables)
+
+        return list_value[index_value]
+
     if node["type"] == "add":
 
         left = evaluate(node["left"], variables)
@@ -200,4 +214,4 @@ def execute(ast, variables):
 
         if ast["operator"] == "<=":
             return left <= right
-        
+       

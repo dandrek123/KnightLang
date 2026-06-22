@@ -1,9 +1,15 @@
 def split_arguments(tokens):
     args = []
     current = []
+    depth = 0
 
     for token in tokens:
-        if token == ",":
+        if token in ["(", "["]:
+            depth += 1
+        elif token in [")", "]"]:
+            depth -= 1
+
+        if token == "," and depth == 0:
             if current:
                 args.append(parse_expression(current))
                 current = []
@@ -14,6 +20,26 @@ def split_arguments(tokens):
         args.append(parse_expression(current))
 
     return args
+
+def tokens_are_list(tokens):
+    if len(tokens) < 2:
+        return False
+
+    if tokens[0] != "[" or tokens[-1] != "]":
+        return False
+
+    depth = 0
+
+    for index, token in enumerate(tokens):
+        if token == "[":
+            depth += 1
+        elif token == "]":
+            depth -= 1
+
+        if depth == 0 and index != len(tokens) - 1:
+            return False
+
+    return depth == 0
 
 def tokens_are_wrapped(tokens):
     if len(tokens) < 2:
@@ -42,19 +68,55 @@ def find_operator_outside_parentheses(tokens, operators):
     for index in range(len(tokens) - 1, -1, -1):
         token = tokens[index]
 
-        if token == ")":
+        if token in [")", "]"]:
             depth += 1
-        elif token == "(":
+        elif token in ["(", "["]:
             depth -= 1
         elif depth == 0 and token in operators:
             return index
 
     return -1
 
+
+def tokens_are_index(tokens):
+    if len(tokens) < 4:
+        return False
+
+    if tokens[1] != "[" or tokens[-1] != "]":
+        return False
+
+    depth = 0
+
+    for index in range(1, len(tokens)):
+        token = tokens[index]
+
+        if token == "[":
+            depth += 1
+        elif token == "]":
+            depth -= 1
+
+        if depth == 0 and index != len(tokens) - 1:
+            return False
+
+    return depth == 0
+
 def parse_expression(tokens):
 
     if tokens_are_wrapped(tokens):
         return parse_expression(tokens[1:-1])
+
+    if tokens_are_list(tokens):
+        return {
+            "type": "list",
+            "items": split_arguments(tokens[1:-1])
+        }
+
+    if tokens_are_index(tokens):
+        return {
+            "type": "index",
+            "list": parse_expression([tokens[0]]),
+            "index": parse_expression(tokens[2:-1])
+        }
 
     if len(tokens) == 1:
         return tokens[0]
