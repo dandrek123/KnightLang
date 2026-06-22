@@ -32,7 +32,7 @@ def tokenize(line):
 
             i += 1
 
-        elif char in " ()=+-*/><":
+        elif char in " (),=+-*/><":
 
             if current:
                 tokens.append(current)

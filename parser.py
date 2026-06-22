@@ -1,4 +1,60 @@
+def split_arguments(tokens):
+    args = []
+    current = []
+
+    for token in tokens:
+        if token == ",":
+            if current:
+                args.append(parse_expression(current))
+                current = []
+        else:
+            current.append(token)
+
+    if current:
+        args.append(parse_expression(current))
+
+    return args
+
+def tokens_are_wrapped(tokens):
+    if len(tokens) < 2:
+        return False
+
+    if tokens[0] != "(" or tokens[-1] != ")":
+        return False
+
+    depth = 0
+
+    for index, token in enumerate(tokens):
+        if token == "(":
+            depth += 1
+        elif token == ")":
+            depth -= 1
+
+        if depth == 0 and index != len(tokens) - 1:
+            return False
+
+    return depth == 0
+
+
+def find_operator_outside_parentheses(tokens, operators):
+    depth = 0
+
+    for index in range(len(tokens) - 1, -1, -1):
+        token = tokens[index]
+
+        if token == ")":
+            depth += 1
+        elif token == "(":
+            depth -= 1
+        elif depth == 0 and token in operators:
+            return index
+
+    return -1
+
 def parse_expression(tokens):
+
+    if tokens_are_wrapped(tokens):
+        return parse_expression(tokens[1:-1])
 
     if len(tokens) == 1:
         return tokens[0]
@@ -7,42 +63,48 @@ def parse_expression(tokens):
         return {
             "type": "call",
             "name": tokens[0],
-            "args": tokens[2:-1]
+            "args": split_arguments(tokens[2:-1])
         }
 
-    left = parse_expression(tokens[:-2])
+    operator_index = find_operator_outside_parentheses(tokens, ["+", "-"])
 
-    operator = tokens[-2]
+    if operator_index != -1:
+        left = parse_expression(tokens[:operator_index])
+        right = parse_expression(tokens[operator_index + 1:])
 
-    right = tokens[-1]
+        if tokens[operator_index] == "+":
+            return {
+                "type": "add",
+                "left": left,
+                "right": right
+            }
 
-    if operator == "+":
-        return {
-            "type": "add",
-            "left": left,
-            "right": right
-        }
+        if tokens[operator_index] == "-":
+            return {
+                "type": "subtract",
+                "left": left,
+                "right": right
+            }
 
-    if operator == "-":
-        return {
-            "type": "subtract",
-            "left": left,
-            "right": right
-        }
+    operator_index = find_operator_outside_parentheses(tokens, ["*", "/"])
 
-    if operator == "*":
-        return {
-            "type": "multiply",
-            "left": left,
-            "right": right
-        }
+    if operator_index != -1:
+        left = parse_expression(tokens[:operator_index])
+        right = parse_expression(tokens[operator_index + 1:])
 
-    if operator == "/":
-        return {
-            "type": "divide",
-            "left": left,
-            "right": right
-        }
+        if tokens[operator_index] == "*":
+            return {
+                "type": "multiply",
+                "left": left,
+                "right": right
+            }
+
+        if tokens[operator_index] == "/":
+            return {
+                "type": "divide",
+                "left": left,
+                "right": right
+            }
 
     return tokens
 
@@ -116,7 +178,7 @@ def parse(tokens):
         return {
             "type": "call",
             "name": tokens[0],
-            "args": tokens[2:-1]
+            "args": split_arguments(tokens[2:-1])
         }
 
     return None
