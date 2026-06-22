@@ -8,6 +8,8 @@ KnightLang is a custom interpreted programming language built from scratch in Py
 - Integers
 - Strings
 - Arithmetic operations (+, -, *, /)
+- Operator precedence
+- Parentheses for grouped expressions
 - String concatenation
 - Assignment statements
 - Comparison operators (>, <, >=, <=, ==, !=)
@@ -44,11 +46,16 @@ func greet
 greet()
 ```
 
+```
+print((2 + 3) * 4)
+print(2 + 3 * 4)
+```
+
+
 ## Roadmap
 
 - Function parameters
 - Return values
-- Operator precedence
 - Lists / arrays
 - Better error handling
 - Standard library functions
