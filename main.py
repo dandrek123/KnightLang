@@ -99,7 +99,10 @@ def run_lines(lines):
 
         elif ast["type"] == "func":
             block, next_index = get_block(lines, i + 1, get_indent(raw_line))
-            functions[ast["name"]] = block
+            functions[ast["name"]] = {
+                "params": ast["params"],
+                "body": block
+            }
 
             i = next_index
             continue
@@ -108,7 +111,32 @@ def run_lines(lines):
             function_name = ast["name"]
 
             if function_name in functions:
-                run_lines(functions[function_name])
+                function_data = functions[function_name]
+                params = function_data["params"]
+                body = function_data["body"]
+                args = ast["args"]
+
+                old_values = {}
+
+                for index, param in enumerate(params):
+                    if param in variables:
+                        old_values[param] = variables[param]
+
+                    if index < len(args):
+                        value_ast = parse(args[index:index + 1])
+                        if value_ast:
+                            variables[param] = execute(value_ast, variables)
+                        else:
+                            from interpreter import evaluate
+                            variables[param] = evaluate(args[index], variables)
+
+                run_lines(body)
+
+                for param in params:
+                    if param in old_values:
+                        variables[param] = old_values[param]
+                    elif param in variables:
+                        del variables[param]
             else:
                 print("Function not found:", function_name)
 

@@ -1,8 +1,4 @@
-func count_to_three
-    let count = 0
+func add_one number
+    print(number + 1)
 
-    while count < 3
-        print(count)
-        count = count + 1
-
-count_to_three()
+add_one(5)

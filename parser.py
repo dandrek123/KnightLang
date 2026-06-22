@@ -71,7 +71,8 @@ def parse(tokens):
     if tokens[0] == "func":
         return {
             "type": "func",
-            "name": tokens[1]
+            "name": tokens[1],
+            "params": tokens[2:]
         }
     
     elif tokens[0] == "while":
@@ -99,10 +100,11 @@ def parse(tokens):
             "right": tokens[3]
         }
 
-    if len(tokens) >= 3 and tokens[1] == "(" and tokens[2] == ")":
+    if len(tokens) >= 3 and tokens[1] == "(" and tokens[-1] == ")":
         return {
             "type": "call",
-            "name": tokens[0]
+            "name": tokens[0],
+            "args": tokens[2:-1]
         }
 
     return None
