@@ -23,20 +23,26 @@ KnightLang is a custom interpreted programming language built from scratch in Py
 
 ## Example
 
+```
 let name = "DAndre"
 
 print("Hello " + name)
+```
 
+```
 let count = 0
 
 while count < 5
     print(count)
     count = count + 1
+```
 
+```
 func greet
     print("Hello from KnightLang")
 
 greet()
+```
 
 ## Roadmap
 
