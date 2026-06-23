@@ -51,6 +51,14 @@ def run_line(line):
 def run_function_call(call_ast):
     function_name = call_ast["name"]
 
+    if function_name == "len":
+        if len(call_ast["args"]) == 0:
+            print("len() expects one argument")
+            return None
+
+        value = evaluate(call_ast["args"][0], variables)
+        return len(value)
+
     if function_name not in functions:
         print("Function not found:", function_name)
         return None

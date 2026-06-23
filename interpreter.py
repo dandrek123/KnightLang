@@ -115,6 +115,11 @@ def evaluate(node, variables):
 
         return list_value[index_value]
 
+    if node["type"] == "call":
+        if node["name"] == "len":
+            value = evaluate(node["args"][0], variables)
+            return len(value)
+
     if node["type"] == "add":
 
         left = evaluate(node["left"], variables)
