@@ -22,6 +22,7 @@ KnightLang is a custom interpreted programming language built from scratch in Py
 - Abstract Syntax Tree (AST)
 - Recursive expression evaluation
 - Interpreter execution engine
+- Cleaner runtime error handling
 
 ## Example
 
@@ -54,7 +55,7 @@ print(2 + 3 * 4)
 - Function parameters
 - Return values
 - Lists / arrays
-- Better error handling
+- More detailed error messages
 - Standard library functions
 - Compiler or Python transpiler
 - Bit assistant integration
