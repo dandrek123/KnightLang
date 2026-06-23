@@ -1,6 +1,6 @@
 from lexer import tokenize
 from parser import parse
-from interpreter import execute, evaluate
+from interpreter import execute, evaluate, KnightLangError
 
 variables = {}
 functions = {}
@@ -181,4 +181,7 @@ def run_lines(lines):
 with open("test.kn", "r") as file:
     lines = file.readlines()
 
-run_lines(lines)
+try:
+    run_lines(lines)
+except KnightLangError as error:
+    print("KnightLang Error:", error)

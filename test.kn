@@ -1,6 +1,2 @@
-let numbers = [10, 20, 30]
 let name = "DAndre"
-
-print(len(numbers))
-print(len(name))
-print(len(numbers) + 2)
+print(name[0])

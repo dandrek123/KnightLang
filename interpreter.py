@@ -1,3 +1,7 @@
+class KnightLangError(Exception):
+    pass
+
+
 def run(filename):
     variables = {}
 
@@ -99,7 +103,10 @@ def evaluate(node, variables):
         if node.startswith('"') and node.endswith('"'):
             return node.strip('"')
 
-        return variables[node]
+        if node in variables:
+            return variables[node]
+
+        raise KnightLangError(f"variable '{node}' is not defined")
 
     if node["type"] == "list":
         items = []
@@ -112,6 +119,15 @@ def evaluate(node, variables):
     if node["type"] == "index":
         list_value = evaluate(node["list"], variables)
         index_value = evaluate(node["index"], variables)
+
+        if not isinstance(list_value, list):
+            raise KnightLangError("indexing can only be used on lists")
+
+        if not isinstance(index_value, int):
+            raise KnightLangError("list index must be an integer")
+
+        if index_value < 0 or index_value >= len(list_value):
+            raise KnightLangError("list index out of range")
 
         return list_value[index_value]
 
@@ -219,4 +235,3 @@ def execute(ast, variables):
 
         if ast["operator"] == "<=":
             return left <= right
-       
